@@ -1,6 +1,11 @@
+#pragma once
+
 #include <compare>
 #include <cmath>
 
+enum class Scale { UTC = 0, UT1 = 1, TAI = 2, TT = 3 };
+
+template<Scale scale>
 class Time {
     double jdInt_ = 0.0; //целые сутки!!!!
     double jdFrac_ = 0.0;
@@ -36,16 +41,19 @@ public:
 
 };
 
-double operator-(const Time& a, const Time& b) noexcept {
+template<Scale s>
+double operator-(const Time<s>& a, const Time<s>& b) noexcept {
     return (a.jd() - b.jd()) * 86400.0;
 }
 
-Time operator-(const Time& t, double secs) noexcept {
+template<Scale s>
+Time<s> operator-(const Time<s>& t, double secs) noexcept {
     double days = secs / 86400.0;
-    return Time(t.jdInt(), t.jdPart() - days);
+    return Time<s>(t.jdInt(), t.jdPart() - days);
 }
 
-Time operator+(const Time& t, double secs) noexcept {
+template<Scale s>
+Time<s> operator+(const Time<s>& t, double secs) noexcept {
     double days = secs / 86400.0;
-    return Time(t.jdInt(), t.jdPart() + days);
+    return Time<s>(t.jdInt(), t.jdPart() + days);
 }
